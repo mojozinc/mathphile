@@ -2,8 +2,21 @@
 <html>
 	<head>
 		<title>Order in Chaos</title>
+		<style>
+			p{font-family: monospace;}
+		</style>
 	</head>
 	<body>
+		<p>
+			1. take a n sided polygon<br>
+			2. pick any point in the plane,trace it<br>
+			3. pick any vertex of the polygon at random<br>
+			4. move some percentage of the way towards the vertex,trace it<br>
+			5. repeat this 1000 times<br><br>
+
+			from randomness we get these beautifully symmetric shapes<br>
+			try 3,0.5 or 5,0.64
+		</p>
 		<input type="button" value="start" id="start" onclick="startDrawing()">
 		<input type="button" value="stop" id="stop" onclick="stopDrawing()">
 		<input type="button" value="clear" id="clear" onclick="ctx.clearRect(0,0,canvas.width,canvas.height)">
