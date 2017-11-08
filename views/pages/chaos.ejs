@@ -4,11 +4,13 @@
 		<title>Order in Chaos</title>
 	</head>
 	<body>
-		<input type="button" value="start" onclick="startDrawing()">
-		<input type="button" value="stop" onclick="stopDrawing()">
-		<input type="button" value="clear" onclick="ctx.clearRect(0,0,canvas.width,canvas.height)">
+		<input type="button" value="start" id="start" onclick="startDrawing()">
+		<input type="button" value="stop" id="stop" onclick="stopDrawing()">
+		<input type="button" value="clear" id="clear" onclick="ctx.clearRect(0,0,canvas.width,canvas.height)">
+		<input type="range" min="1" max="20" id="vertex_slider" value="3">
 		<input type="number" id="vertices" value="3">
-		<input type="number" id="stride" value="0.5" step="0.1">
+		<input type="range" min="0.1" max="1" id="stride_slider" value="0.5" step="0.01">
+		<input type="number" id="stride" value="0.5" step="0.01">
 		<canvas></canvas>
 	</body>
 	<script id="config">
@@ -47,8 +49,8 @@
 				var t = trackerPoint;
 				var Dy = v.y - t.y,Dx = v.x - t.x;
 				t = trackerPoint = {
-					x: t.x + Dx*stride,
-					y: t.y + Dy*stride
+					x: t.x + Dx*stride.value,
+					y: t.y + Dy*stride.value
 				}
 				painter.point(t.x,t.y,1,'black');
 			}
@@ -73,13 +75,9 @@
 
 	</script>
 	<script type="text/javascript">
-
-		setup = function(){
-			var v = document.getElementById("vertices");
-			var s = document.getElementById("stride");
+		plot_vertices = function(numberofvertices){
 			vertices = [];
-			vertexCount = parseInt(v.value);
-			stride = parseFloat(s.value);		
+			vertexCount = parseInt(numberofvertices);		
 			var alpha = 2*Math.PI/vertexCount;
 			for(var i = 0 ; i < vertexCount; i++){
 				
@@ -91,7 +89,35 @@
 				painter.point(p.x,p.y,2,'red');
 			}
 		}
+		setup = function(){
+			var v = document.getElementById("vertices");
+			var s = document.getElementById("stride");
+			var v_slider = document.getElementById("vertex_slider");
+			var s_slider = document.getElementById("stride_slider");
+
+			var b_start = document.getElementById("start");
+			var b_stop = document.getElementById("stop");
+			var b_clear = document.getElementById("clear");
+			
+			v_slider.onchange = function(){
+				v.value = v_slider.value
+				v.onchange()
+			}
+			s_slider.onchange = function(){
+				s.value = s_slider.value
+				s.onchange()
+			}
+
+			v.onchange = s.onchange = function(){
+				plot_vertices(v.value)
+				b_clear.click()
+				b_start.click()
+			}
+
+			plot_vertices(v.value)
+		}
 		setup();
 		
+		// Events
 	</script>
 </html>
