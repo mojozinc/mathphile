@@ -13,9 +13,9 @@ app.get('/', function(request, response) {
   response.render('pages/index');
 });
 
-app.get('/chaos',function(req,res)){
-	response.render('pages/chaos.html')
-}
+app.get('/chaos', function(request ,response ){
+	response.render('pages/chaos')
+})
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
