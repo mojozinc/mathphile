@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>spiral</title>
+		<style>
+			p{font-family: monospace;}
+		</style>
+	</head>
+	<body>
+		<input type="button" value="start" id="start" onclick="startDrawing()">
+		<input type="button" value="stop" id="stop" onclick="stopDrawing()">
+		<input type="button" value="clear" id="clear" onclick="ctx.clearRect(0,0,canvas.width,canvas.height)">
+
+		<br>
+		<label>Coil displacement</label>
+		<input type="range" min="4" max="40" id="coil_dist" value="5">
+		<input type="number" id="coilDist" value="5">
+		
+		<br>
+		<label>Stride fraction:</label>
+		<input type="range" min="0.1" max="1" id="stride_slider" value="0.5" step="0.01">
+		<input type="number" id="stride" value="0.5" step="0.01">
+
+		<br>
+		<label>Point Size:</label>
+		<input type="range" min="0.1" max="5" id="pointsize_slider" value="1" step="0.1">
+		<input type="number" id="pointsize" value="1" step="0.1">
+
+		<canvas></canvas>
+	</body>
+	<script id="config">
+		canvas = document.getElementsByTagName('canvas')[0];
+		h = window.innerHeight-25;
+		w = document.body.clientWidth;
+		canvas.setAttribute("height",h);
+		canvas.setAttribute("width",w);
+		ctx = canvas.getContext('2d');
+		iterations = 10000;
+		keepDrawing = true;
+		trackerPoint = 0;
+	</script>
+	<script id = "utils">
+		randInt = function(limit){
+			limit = limit || 1000;
+			return parseInt(Math.random()*limit*10)%limit
+		}
+		randomPoint = function(){
+			return {x:randInt()%w,y:randInt()%h};
+		}
+		window.painter = {}
+		window.painter.point=function (h,alpha,color){
+			var coil_number = parseInt(alpha/(2*Math.PI));
+			var theta = alpha%(2*Math.PI);
+			var r = coil_number*h + theta*h/(2*Math.PI);
+			var size = 1;
+			ctx.beginPath()
+			ctx.arc(r*Math.cos(theta)+window.innerWidth/2,r*Math.sin(theta)+window.innerHeight/2,size,0,2*Math.PI);
+			ctx.stroke();
+			if(color){
+				ctx.fillStyle = color;
+				ctx.fill();
+			}
+		}
+		window.painter.track = function(){
+				var v = vertices[randInt()%vertices.length];
+				var t = trackerPoint;
+				var Dy = v.y - t.y,Dx = v.x - t.x;
+				t = trackerPoint = {
+					x: t.x + Dx*stride.value,
+					y: t.y + Dy*stride.value
+				}
+				painter.point(t.x,t.y,pointsize.value,'black');
+			}
+		startDrawing = function(){
+			setup();
+			trackerPoint = randomPoint();
+			keepDrawing = true;
+			var pulse = 1;
+			var inc = 0.05;
+			var alpha = 0;
+			var infiloop = function(){
+				if(!keepDrawing)
+					return 
+				painter.point(window.coilDist.value,alpha,'red');
+				alpha = alpha+inc;
+				setTimeout(infiloop,pulse);
+				}
+			setTimeout(infiloop,pulse);
+			}
+
+		stopDrawing = function(){
+			keepDrawing = false;
+		}
+
+	</script>
+	<script type="text/javascript">	
+		setup = function(){
+			var v = document.getElementById("coilDist");
+			var s = document.getElementById("stride");
+			var coil_dist_slider = document.getElementById("coil_dist");
+			var s_slider = document.getElementById("stride_slider");
+
+			var b_start = document.getElementById("start");
+			var b_stop = document.getElementById("stop");
+			var b_clear = document.getElementById("clear");
+			
+			coil_dist_slider.onchange = function(){
+				v.value = coil_dist_slider.value
+				v.onchange()
+			}
+			s_slider.onchange = function(){
+				s.value = s_slider.value
+				s.onchange()
+			}
+
+			pointsize_slider.onchange = function(){
+				pointsize.value = pointsize_slider.value
+				pointsize.onchange();
+			}
+
+			v.onchange = s.onchange = pointsize.onchange = function(){
+				b_clear.click()
+				b_start.click()
+			}
+
+			
+		}
+		setup();
+		
+		// Events
+	</script>
+</html>

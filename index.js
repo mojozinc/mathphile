@@ -13,9 +13,11 @@ app.get('/', function(request, response) {
   response.render('pages/index');
 });
 
-app.get('/chaos', function(request ,response ){
-	response.render('pages/chaos')
+app.get('/:page', function(request ,response ){
+
+	response.render('pages/'+request.params.page)
 })
+
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
